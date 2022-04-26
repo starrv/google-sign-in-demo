@@ -62,6 +62,7 @@ class HomePage extends StatelessWidget {
               cancelRegistration: appState.cancelRegistration,
               registerAccount: appState.registerAccount,
               signOut: appState.signOut,
+              resetPassword: appState.resetPassword,
             ),
           ),
           const Divider(
@@ -142,6 +143,11 @@ class ApplicationState extends ChangeNotifier {
     } on FirebaseAuthException catch (e) {
       errorCallback(e);
     }
+  }
+
+  Future<void> resetPassword(
+      String email)async{
+      await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
   }
 
   void cancelRegistration() {

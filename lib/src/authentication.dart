@@ -20,6 +20,7 @@ class Authentication extends StatelessWidget {
     required this.cancelRegistration,
     required this.registerAccount,
     required this.signOut,
+    required this.resetPassword,
   });
 
   final ApplicationLoginState loginState;
@@ -42,6 +43,9 @@ class Authentication extends StatelessWidget {
     void Function(Exception e) error,
   ) registerAccount;
   final void Function() signOut;
+  final void Function(
+    String email,
+  ) resetPassword;
 
   @override
   Widget build(BuildContext context) {
@@ -71,6 +75,9 @@ class Authentication extends StatelessWidget {
             signInWithEmailAndPassword(email, password,
                 (e) => _showErrorDialog(context, 'Failed to sign in', e));
           },
+          resetPassword: (email) {
+              resetPassword(email);
+            }
         );
       case ApplicationLoginState.register:
         return RegisterForm(
@@ -214,6 +221,8 @@ class _EmailFormState extends State<EmailForm> {
   }
 }
 
+
+
 class RegisterForm extends StatefulWidget {
   const RegisterForm({
     required this.registerAccount,
@@ -337,9 +346,11 @@ class PasswordForm extends StatefulWidget {
   const PasswordForm({
     required this.login,
     required this.email,
+    required this.resetPassword
   });
   final String email;
   final void Function(String email, String password) login;
+  final void Function(String email) resetPassword;
   @override
   _PasswordFormState createState() => _PasswordFormState();
 }
@@ -348,6 +359,7 @@ class _PasswordFormState extends State<PasswordForm> {
   final _formKey = GlobalKey<FormState>(debugLabel: '_PasswordFormState');
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  String resetPasswordResult='';
 
   @override
   void initState() {
@@ -367,6 +379,15 @@ class _PasswordFormState extends State<PasswordForm> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
+                Center(
+                  child: Text(
+                      resetPasswordResult,
+                      style: const TextStyle(
+                        color: Colors.green,
+                        fontWeight: FontWeight.bold,
+                      ),
+                  ),
+                ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24),
                   child: TextFormField(
@@ -416,6 +437,17 @@ class _PasswordFormState extends State<PasswordForm> {
                         child: const Text('SIGN IN'),
                       ),
                       const SizedBox(width: 30),
+                      StyledButton(
+                        onPressed: () {
+                          widget.resetPassword(
+                            _emailController.text,
+                          );
+                        setState(() {
+                          resetPasswordResult='please check your email';
+                        });
+                        },
+                        child: const Text('Reset Password'),
+                      ),
                     ],
                   ),
                 ),
